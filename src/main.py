@@ -64,8 +64,8 @@ def visualise_qconnects(qconnects: List[QConnect]) -> str:
         graph += f'label="{file}";\n'
         graph += f'color=blue;\n'
         for qconnect in connects:
-            graph += f'"{qconnect.file}/{qconnect.sender_class}" [label="class: {qconnect.sender_class if qconnect.sender_class else "old connect-syntax not supported"}\nname: {qconnect.sender}"];\n'
-            graph += f'"{qconnect.file}/{qconnect.receiver_class}" [label="class: {qconnect.receiver_class if qconnect.receiver_class else "old syntax not supported"}\nname: {qconnect.receiver}"];\n'
+            graph += f'"{qconnect.file}/{qconnect.sender_class}" [label="class: {qconnect.sender_class if qconnect.sender_class else "old connect-syntax not supported"}"];\n'
+            graph += f'"{qconnect.file}/{qconnect.receiver_class}" [label="class: {qconnect.receiver_class if qconnect.receiver_class else "old syntax not supported"}"];\n'
         for qconnect in connects:
             graph += f'"{qconnect.file}/{qconnect.sender_class}" -> "{qconnect.file}/{qconnect.receiver_class}" [label="{qconnect.signal} → {qconnect.slot}"];\n'
         graph += f'}}\n'
