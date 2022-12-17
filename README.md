@@ -9,8 +9,7 @@ The class level visualization shows the signal/slot connections of classes withi
 This allows you to see which classes are connected to each other and how many connections there are between them. The edge's color indicates how often a connection occurs between two classes with this signal/slot combination (linearly scaled from green to red).
 
 ## File level
-The file level visualization shows the signal/slot connections within a file. This allows you to see which signals are connected to which slots within a file.
-
+The file level visualization shows the signal/slot connections within a file. This allows you to see which signals are connected to which slots within a file. The file level includes the class name and the variable name.
 
 ## Example
 ![](qtclasses.png)
