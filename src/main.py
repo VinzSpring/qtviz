@@ -18,10 +18,10 @@ def find_qconnects(file: str) -> List[QConnect]:
     file = file.replace('\\', '/')
     # new connect syntax
     # connect(sender, &Sender::signal, receiver, &Receiver::slot)
-    new_syntax = re.compile(r'connect\((?P<sender>\w+),\s*&(?P<sender_class>\w+)::(?P<signal>\w+),\s*(?P<receiver>\w+),\s*&(?P<receiver_class>\w+)::(?P<slot>\w+)\)')
+    new_syntax = re.compile(r'connect\((?P<sender>\S+),\s*&(?P<sender_class>\w+)::(?P<signal>\w+),\s*(?P<receiver>\S+),\s*&(?P<receiver_class>\w+)::(?P<slot>\w+)\)')
     # old connect syntax
     # connect(sender, SIGNAL(signal()), receiver, SLOT(slot()))
-    old_syntax = re.compile(r'connect\((?P<sender>\w+),\s*SIGNAL\((?P<signal>\w+)\(\)\),\s*(?P<receiver>\w+),\s*SLOT\((?P<slot>\w+)\(\)\)\)')
+    old_syntax = re.compile(r'connect\((?P<sender>\S+),\s*SIGNAL\((?P<signal>\w+)\(\)\),\s*(?P<receiver>\S+),\s*SLOT\((?P<slot>\w+)\(\)\)\)')
     qconnects = []
 
     with open(file, 'r', encoding='utf-8') as f:
@@ -88,13 +88,16 @@ def visualise_qconnects(qconnects: List[QConnect]) -> str:
             continue
         connection = f'"{qconnect.sender_class}" -> "{qconnect.receiver_class}"'
         if connection not in connections:
-            connections[connection] = 0
-        connections[connection] += 1
+            connections[connection] = {}
+        signal_slot = f"{qconnect.signal} → {qconnect.slot}"
+        if signal_slot not in connections[connection]:
+            connections[connection][signal_slot] = 0
+        connections[connection][signal_slot] += 1
 
-    max_connections = max(connections.values())
-    for connection, count in connections.items():
-        hex_color = f'{int(255 * (count / max_connections)):02x}{int(255 * (1 - count / max_connections)):02x}00'
-        graph += f'{connection} [label="{qconnect.signal} →{count}→ {qconnect.slot}" color="#{hex_color}"];\n'
+    for connection, signal_slots in connections.items():
+        for signal_slot, count in signal_slots.items():
+            signal, slot = signal_slot.split('→')
+            graph += f'{connection} [label="{signal} →{count}→ {slot}"];\n'
 
     graph += '}\n'
 
@@ -103,7 +106,7 @@ def visualise_qconnects(qconnects: List[QConnect]) -> str:
 
 def main():
     args = sys.argv[1:]    
-    path = args[0]
+    path = "D:/proj/lxc_app_daikoku"
     qconnects = []
     qconnects.extend(recursive_find_qconnects(path))
     graph = visualise_qconnects(qconnects)
